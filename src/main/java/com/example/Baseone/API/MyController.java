@@ -2,15 +2,22 @@ package com.example.Baseone.API;
 
 
 import com.example.Baseone.BACK.JDBCBase;
+import com.example.Baseone.MODEL.RecordModel;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org. springframework. stereotype. Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org. springframework. web. bind. annotation. RequestMapping;
 import org. springframework. web. bind. annotation. RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
-@Controller
+@RestController
 public class MyController {
 
     @Autowired
@@ -24,15 +31,19 @@ public class MyController {
     private String db_url;
 
     @RequestMapping(value = "/records", method = RequestMethod. GET)
-    public String retjson(){
+    public ResponseEntity<List<RecordModel>> retjson(){
         JDBCBase a = new JDBCBase(db_url,user,password);
-        a.select();
+        ResponseEntity<List<RecordModel>> b = a.select();
+        //a.insert("cringe","bruh");
         a.close();
-        return "bruh";
+        return b;
     }
     @RequestMapping(value = "/records", method = RequestMethod. POST)
-    public void postjson(JSONObject bruh){
+    public void postjson(@RequestBody RecordModel w){
 
+        JDBCBase a = new JDBCBase(db_url,user,password);
+        a.insert(w.getName(),w.getData());
+        a.close();
     }
     @RequestMapping(value = "/strategy", method = RequestMethod. POST)
     void strategyswitch(){

@@ -1,13 +1,21 @@
 package com.example.Baseone.BACK;
 
+
+import com.example.Baseone.MODEL.RecordModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
+import java.util.*;
 import java.sql.*;
 public class JDBCBase {
 
@@ -30,10 +38,8 @@ public class JDBCBase {
             try {
                 this.createconnection();
 
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
             }
         }
         public void createconnection() throws ClassNotFoundException, SQLException {
@@ -48,23 +54,31 @@ public class JDBCBase {
                 }
             }
 
-        public void select() {
-            String tablename;
+        public ResponseEntity<List<RecordModel>> select() {
             Statement stm = null;
+            List <RecordModel> lst = new ArrayList<>();
             try {
                 stm = connection.createStatement();
                 ResultSet rs = stm.executeQuery("select * from bruh");
-                System.out.println(rs);
                 while(rs.next()){
-                    System.out.println(rs.getInt(1));
-                    System.out.println(rs.getString(2));
-                    System.out.println(rs.getString(3));
+                    lst.add(new RecordModel(rs.getInt(1),rs.getString(2),rs.getString(3)));
                 }
+                return new ResponseEntity<List<RecordModel>>(lst, HttpStatus.OK);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-
+            return new ResponseEntity<List<RecordModel>>(lst, HttpStatus.OK);
         }
+        public void insert(String name,String data){
+            Statement stm = null;
+            try {
+                stm = connection.createStatement();
+                stm.executeUpdate("insert into public.bruh (name,data) values ('"+ name +"','"+ data +"')");
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
         public void close() {
             if (connection != null) {
                 try {
