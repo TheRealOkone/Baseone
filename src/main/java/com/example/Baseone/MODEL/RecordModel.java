@@ -1,14 +1,25 @@
 package com.example.Baseone.MODEL;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.Generated;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "bruh")
 public class RecordModel {
+    @Id @GeneratedValue
+    @Column(name = "id")
     @JsonProperty("id")
-    int id;
+    private int id;
+
+    @Column(name = "name")
     @JsonProperty("name")
-    String name;
+    private String name;
+
+    @Column(name = "data")
     @JsonProperty("data")
-    String data;
+    private String data;
 
     public RecordModel(int id, String name, String data) {
         this.id = id;
@@ -26,5 +37,17 @@ public class RecordModel {
 
     public String getData() {
         return data;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 }

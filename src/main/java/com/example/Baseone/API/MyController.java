@@ -5,16 +5,14 @@ import com.example.Baseone.BACK.HibernateBase;
 import com.example.Baseone.BACK.JDBCBase;
 import com.example.Baseone.BACK.Strategy;
 import com.example.Baseone.MODEL.RecordModel;
+import com.example.Baseone.Reps.ModelRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org. springframework. stereotype. Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org. springframework. web. bind. annotation. RequestMapping;
-import org. springframework. web. bind. annotation. RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,34 +32,31 @@ public class MyController {
 
     private Strategy a = null;
 
+    @Autowired
+    ModelRepository rep;
+
+    private Context d;
+
     @RequestMapping(value = "/records", method = RequestMethod. GET)
     public ResponseEntity<List<RecordModel>> retjson(){
-        if(a == null){
-            a = new JDBCBase(db_url,user,password)
+        if(d == null){
+            d = new Context(password, user,  db_url,  rep);
         }
-        a.createconnection();
-        ResponseEntity<List<RecordModel>> b = a.select();
-        //a.insert("cringe","bruh");
-        a.close();
-        return b;
+        return d.retjson(a);
     }
     @RequestMapping(value = "/records", method = RequestMethod. POST)
     public void postjson(@RequestBody RecordModel w){
-        if(a == null){
-            a = new JDBCBase(db_url,user,password)
+        if(d == null){
+            d = new Context(password, user,  db_url,  rep);
         }
-        a.createconnection();
-        a.insert(w.getName(),w.getData());
-        a.close();
+        a = d.postjson(a,w);
     }
     @RequestMapping(value = "/strategy", method = RequestMethod. POST)
-    void strategyswitch(String str){
-        if(str.toLowerCase().equals("jdbc")){
-            a = new JDBCBase(db_url,user,password);
+    void strategyswitch(@RequestBody String str){
+        if(d == null){
+            d = new Context(password, user,  db_url,  rep);
         }
-        if(str.toLowerCase().equals("hibernate")){
-            a = new HibernateBase(db_url,user,password);
-        }
+        a = d.strategyswitch(str);
     }
 
 }
