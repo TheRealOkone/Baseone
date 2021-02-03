@@ -1,7 +1,9 @@
 package com.example.Baseone.API;
 
 
+import com.example.Baseone.BACK.HibernateBase;
 import com.example.Baseone.BACK.JDBCBase;
+import com.example.Baseone.BACK.Strategy;
 import com.example.Baseone.MODEL.RecordModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,9 +32,14 @@ public class MyController {
     @Value("${user.db_url}")
     private String db_url;
 
+    private Strategy a = null;
+
     @RequestMapping(value = "/records", method = RequestMethod. GET)
     public ResponseEntity<List<RecordModel>> retjson(){
-        JDBCBase a = new JDBCBase(db_url,user,password);
+        if(a == null){
+            a = new JDBCBase(db_url,user,password)
+        }
+        a.createconnection();
         ResponseEntity<List<RecordModel>> b = a.select();
         //a.insert("cringe","bruh");
         a.close();
@@ -40,14 +47,21 @@ public class MyController {
     }
     @RequestMapping(value = "/records", method = RequestMethod. POST)
     public void postjson(@RequestBody RecordModel w){
-
-        JDBCBase a = new JDBCBase(db_url,user,password);
+        if(a == null){
+            a = new JDBCBase(db_url,user,password)
+        }
+        a.createconnection();
         a.insert(w.getName(),w.getData());
         a.close();
     }
     @RequestMapping(value = "/strategy", method = RequestMethod. POST)
-    void strategyswitch(){
-
+    void strategyswitch(String str){
+        if(str.toLowerCase().equals("jdbc")){
+            a = new JDBCBase(db_url,user,password);
+        }
+        if(str.toLowerCase().equals("hibernate")){
+            a = new HibernateBase(db_url,user,password);
+        }
     }
 
 }

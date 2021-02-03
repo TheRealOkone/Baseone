@@ -17,7 +17,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.*;
 import java.sql.*;
-public class JDBCBase {
+public class JDBCBase implements Strategy{
 
 
         String db_url;
@@ -35,21 +35,16 @@ public class JDBCBase {
             this.user = user;
             this.password = password;
             this.db_url = db_url;
-            try {
-                this.createconnection();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
-        public void createconnection() throws ClassNotFoundException, SQLException {
+        public void createconnection(){
 
             Statement statement = null;
             try {
                 Class.forName(JDBC_DRIVER);
                 connection = DriverManager.getConnection(db_url, user, password);
             }
-            catch(SQLException e) {
+            catch(Exception e) {
                 e.printStackTrace();
                 }
             }
