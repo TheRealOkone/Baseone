@@ -32,7 +32,7 @@ public class HibernateBase implements Strategy{
 
     @Override
     public void insert(String name, String data) {
-        rep.save(new RecordModel(47,name,data));
+        rep.save(new RecordModel(7865545,name,data));
     }
 
     @Override
